@@ -1,10 +1,15 @@
 const redis = require('redis');
 const express = require('express');
 const bp = require('body-parser');
+const cors = require('cors');
+const {promisify} = require('util');
 
 const client = redis.createClient();
+const asyncLpush = promisify(client.lpush).bind(client);
+const asyncLrange = promisify(client.lrange).bind(client);
 const app = express();
 app.use(bp.json());
+app.use(cors({origin: '*'}));
 const PORT = 3000;
 const EVENTS = {
     LOGIN: 'login',
@@ -12,55 +17,62 @@ const EVENTS = {
 }
 const LOGS = 'logs';
 const DATA = 'data';
-const handleError = (err, reply, res) => {
-    redis.print(err, reply);
-    if (res) {
-        res.status(400).json({message: err.message});
-    }
-}
-handleResponse = (err, reply, res) => {
-    redis.print(err, reply);
-    res.json({reply});
-}
-const createClientCallback = res => (err, reply) => {
-    if (err) handleError(err, reply, res);
-    else handleResponse(err, reply, res);
-}
 
-app.post('/event/:name', (req, res) => {
+app.post('/event/:name', async (req, res) => {
     const {params: {name}, body} = req;
-    const clientCallback = createClientCallback(res);
     const date = Date.now();
-    const log = JSON.stringify({event: name, date});
     switch (name) {
         case EVENTS.LOGIN:
-            client.lpush(LOGS, log, clientCallback);
+            const reply = await asyncLpush(LOGS, date, name);
+            redis.print(reply);
+            res.json({reply});
             break;
         case EVENTS.ADD_DATA:
             const {title, text} = body;
             if (!title || !text) {
-                return handleError({message: 'Request body must have "title" and "text" fields'}, null, res);
+                next(new Error('Request body must have "title" and "text" fields'));
             }
-            const data = JSON.stringify({title, text});
-            client.lpush(LOGS, log, handleError);
-            client.lpush(DATA, data, clientCallback);
+            const logsReply = await asyncLpush(LOGS, date, name);
+            redis.print(logsReply);
+            const dataReply = await asyncLpush(DATA, text, title);
+            redis.print(dataReply);
+            res.json({dataReply});
             break;
         default:
-            clientCallback(new Error('Event not found'));
+            next(new Error('Event has not been found'));
     }
 });
 
-app.get('/logs', (req, res) => {
+app.get('/logs', async (req, res) => {
     const {query: {start = 0, stop = -1}} = req;
-    const clientCallback = createClientCallback(res);
-    client.lrange(LOGS, start, stop, clientCallback);
+    const rawReply = await asyncLrange(LOGS, start * 2, stop * 2 + 1);
+    const reply = [];
+    for (let i = 0; i < rawReply.length; i+=2) {
+        reply.push({
+            event: rawReply[i],
+            date: rawReply[i + 1]
+        })
+    }
+    redis.print(rawReply);
+    res.json({reply});
 });
 
-app.get('/data', (req, res) => {
+app.get('/data', async (req, res) => {
     const {query: {start = 0, stop = -1}} = req;
-    const clientCallback = createClientCallback(res);
-    client.lrange(DATA, start, stop, clientCallback);
+    const rawReply = await asyncLrange(DATA, start * 2, stop * 2 + 1);
+    const reply = [];
+    for (let i = 0; i < rawReply.length; i+=2) {
+        reply.push({
+            title: rawReply[i],
+            text: rawReply[i + 1]
+        })
+    }
+    redis.print(rawReply);
+    res.json({reply});
+});
+
+app.use((err, req, res, next) => {
+    res.json({message: err.message});
 });
 
 app.listen(PORT, '0.0.0.0', () => console.log(`listening on port ${PORT}`));
-
