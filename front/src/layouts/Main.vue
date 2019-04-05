@@ -22,13 +22,22 @@ export default {
 <style scoped>
 .container {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .sidebar {
-    flex: 1;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .content {
-    flex: 3;
+  flex: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

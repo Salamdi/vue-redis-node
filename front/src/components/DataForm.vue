@@ -1,12 +1,29 @@
 <template>
   <form v-on:submit="handleSubmit">
-    <div>
-      <input type="text" v-model="title" required>
+    <div class="form-group">
+      <input
+        type="text"
+        v-model="title"
+        required
+        id="title"
+        placeholder="Title"
+        class="form-control"
+      >
     </div>
-    <div>
-      <textarea cols="30" rows="10" v-model="text" required></textarea>
+    <div class="form-group">
+      <textarea
+        cols="30"
+        rows="10"
+        v-model="text"
+        required
+        id="text"
+        placeholder="Text"
+        class="form-control"
+      ></textarea>
     </div>
-    <button type="submit">Submit</button>
+    <div class="form-group" style="text-align: center;">
+      <button type="submit" class="btn btn-primary">Add</button>
+    </div>
   </form>
 </template>
 
@@ -41,7 +58,7 @@ export default {
     return {
       title: "",
       text: ""
-    }
+    };
   }
 };
 </script>

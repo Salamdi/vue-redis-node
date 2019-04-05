@@ -1,8 +1,9 @@
 <template>
   <a
     v-bind:href="href"
-    v-bind:class="{ active: isActive }"
+    v-bind:class="{ disabled: isActive }"
     v-on:click="go"
+    class="nav-link"
   >
     <slot></slot>
   </a>
@@ -36,9 +37,3 @@
     }
   }
 </script>
-
-<style scoped>
-  .active {
-    color: cornflowerblue;
-  }
-</style>
