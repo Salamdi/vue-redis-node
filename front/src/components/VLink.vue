@@ -21,6 +21,9 @@
     },
     computed: {
       isActive () {
+        if (this.href === '/addData') {
+          return this.href === this.$root.currentRoute || this.$root.currentRoute === '/'
+        }
         return this.href === this.$root.currentRoute
       }
     },
