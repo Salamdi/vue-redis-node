@@ -23,21 +23,20 @@ export default {
 .container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  padding-top: 40px;
 }
 
 .sidebar {
   flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 24px;
 }
 
 .content {
   flex: 3;
   display: flex;
   justify-content: center;
-  align-items: center;
+  height: 100vh;
+  overflow-y: auto;
 }
 </style>

@@ -1,8 +1,7 @@
 {
-  "name": "vue-2.0-simple-routing-example",
+  "name": "vue-2.0-simple-app",
   "description": "A Vue.js project",
-  "author": "Chris Fritz <chrisvfritz@gmail.com>",
-  "private": true,
+  "author": "Dinislam",
   "scripts": {
     "dev": "webpack-dev-server --inline --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
