@@ -23,7 +23,6 @@ export default {
 .container {
   display: flex;
   justify-content: center;
-  padding-top: 40px;
 }
 
 .sidebar {
@@ -38,5 +37,6 @@ export default {
   justify-content: center;
   height: 100vh;
   overflow-y: auto;
+  padding: 24px;
 }
 </style>
