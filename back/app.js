@@ -30,7 +30,7 @@ app.post('/event/:name', async (req, res, next) => {
                 const {title, text} = body;
                 if (!title || !text) {
                     req.statusCode = 400;
-                    next(new Error('Request body must have "title" and "text" fields'));
+                    return next(new Error('Request body must have "title" and "text" fields'));
                 }
                 const logsReply = await asyncLpush(LOGS, date, name);
                 redis.print(logsReply);
@@ -40,7 +40,7 @@ app.post('/event/:name', async (req, res, next) => {
                 break;
             default:
                 req.statusCode = 400;
-                next(new Error('Event has not been found'));
+                return next(new Error('Event has not been found'));
         }
     } catch (err) {
         req.statusCode = 500;
