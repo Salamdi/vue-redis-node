@@ -11,6 +11,7 @@ export default {
     created: function() {
         const URL = `${API_ENDPOINT}/${API_ROUTES.DATA}`
         axios.get(URL)
+            .then(({data}) => data)
             .then(({reply}) => {
                 this.appData = reply.map(data => {
                     data.id = Math.random().toString(36).slice(2)
