@@ -9,6 +9,7 @@
     "deploy": "surge --project . --domain vue-2-simple-routing-example.surge.sh"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "vue": "^2.3.3"
   },
   "devDependencies": {

@@ -1,7 +1,6 @@
 const redis = require('redis');
 const express = require('express');
 const bp = require('body-parser');
-const cors = require('cors');
 const {promisify} = require('util');
 
 const client = redis.createClient();
@@ -9,7 +8,6 @@ const asyncLpush = promisify(client.lpush).bind(client);
 const asyncLrange = promisify(client.lrange).bind(client);
 const app = express();
 app.use(bp.json());
-app.use(cors({origin: '*'}));
 const PORT = 3000;
 const EVENTS = {
     LOGIN: 'login',

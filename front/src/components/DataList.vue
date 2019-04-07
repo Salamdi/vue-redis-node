@@ -3,19 +3,17 @@
 </template>
 
 <script>
-import { API_ENDPOINT, API_ROUTES } from '../conf';
+import axios from 'axios'
+import { API_ENDPOINT, API_ROUTES } from '../conf'
 import List from './List.vue'
 
 export default {
     created: function() {
         const URL = `${API_ENDPOINT}/${API_ROUTES.DATA}`
-        fetch(URL, {
-            'Content-Type': 'application/json'
-        })
-            .then(res => res.json())
+        axios.get(URL)
             .then(({reply}) => {
                 this.appData = reply.map(data => {
-                    data.id = Math.random().toString(36).slice(2);
+                    data.id = Math.random().toString(36).slice(2)
                     return data;
                 });
             })

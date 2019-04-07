@@ -28,7 +28,8 @@
 </template>
 
 <script>
-import { API_ENDPOINT, EVENTS, API_ROUTES } from "../conf";
+import axios from 'axios'
+import { API_ENDPOINT, EVENTS, API_ROUTES } from "../conf"
 
 export default {
   methods: {
@@ -37,15 +38,10 @@ export default {
       const { title, text } = this;
       if (title && text) {
         const URL = `${API_ENDPOINT}/${API_ROUTES.EVENT}/${EVENTS.ADD_DATA}`;
-        const body = JSON.stringify({ title, text });
-        fetch(URL, {
-          method: "POST",
-          body,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        })
-          .then(res => res.json())
+        const options = {headers: {'Content-Type': 'application/json'}}
+        const body = JSON.stringify({ title, text })
+        axios.post(URL, body, options)
+          .then(({data}) => data)
           .then(res => {
             console.log(res);
             this.title = "";

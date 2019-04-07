@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import axios from 'axios'
 import routes from './routes'
 import {
     API_ENDPOINT,
@@ -21,7 +22,8 @@ const app = new Vue({
     },
     created: function() {
         const URL = `${API_ENDPOINT}/${API_ROUTES.EVENT}/${EVENTS.LOGIN}`
-        fetch(URL, {method: 'POST'})
+        const options = {headers: {'Content-Type': 'application/json'}}
+        axios.post(URL, null, options)
             .then(() => console.log('Logged in'))
             .catch((err) => console.error(err.message))
     },
