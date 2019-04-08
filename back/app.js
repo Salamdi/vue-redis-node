@@ -8,6 +8,9 @@ const asyncLpush = promisify(client.lpush).bind(client);
 const asyncLrange = promisify(client.lrange).bind(client);
 const app = express();
 app.use(bp.json());
+if (process.env.NODE_ENV === 'development') {
+    require('./cors')(app);
+}
 const PORT = 3000;
 const EVENTS = {
     LOGIN: 'login',
