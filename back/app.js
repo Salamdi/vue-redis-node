@@ -19,6 +19,23 @@ const EVENTS = {
 const LOGS = 'logs';
 const DATA = 'data';
 
+const date = () => {
+    const date = new Date();
+    return date.toLocaleString();
+}
+const log = (...args) => {
+    console.group(date());
+    console.log(...args);
+    console.log('------------------');
+    console.groupEnd();
+}
+const logError = err => {
+    console.group(date());
+    console.error(err);
+    console.log('------------------');
+    console.groupEnd();
+}
+
 app.post('/event/:name', async (req, res, next) => {
     try {
         const {params: {name}, body} = req;
@@ -26,7 +43,7 @@ app.post('/event/:name', async (req, res, next) => {
         switch (name) {
             case EVENTS.LOGIN:
                 const reply = await asyncLpush(LOGS, date, name);
-                redis.print(reply);
+                log(reply);
                 res.json({reply});
                 break;
             case EVENTS.ADD_DATA:
@@ -36,9 +53,9 @@ app.post('/event/:name', async (req, res, next) => {
                     return next(new Error('Request body must have "title" and "text" fields'));
                 }
                 const logsReply = await asyncLpush(LOGS, date, name);
-                redis.print(logsReply);
+                log(logsReply);
                 const dataReply = await asyncLpush(DATA, text, title);
-                redis.print(dataReply);
+                log(dataReply);
                 res.json({dataReply});
                 break;
             default:
@@ -62,7 +79,7 @@ app.get('/logs', async (req, res, next) => {
                 date: rawReply[i + 1]
             })
         }
-        redis.print(rawReply);
+        log(rawReply);
         res.json({reply});
     } catch (err) {
         req.statusCode = 500;
@@ -81,7 +98,7 @@ app.get('/data', async (req, res, next) => {
                 text: rawReply[i + 1]
             })
         }
-        redis.print(rawReply);
+        log(rawReply);
         res.json({reply});
     } catch (err) {
         req.statusCode = 500;
@@ -93,8 +110,8 @@ app.use((err, req, res, next) => {
     const {statusCode = 500} = req;
     let {message} = err;
     if (statusCode === 500) message = 'Internal server error';
-    console.error(err);
+    logError(err);
     res.status(statusCode).json({message, reply: []});
 });
 
-app.listen(PORT, 'localhost', () => console.log(`listening on port ${PORT}`));
+app.listen(PORT, 'localhost', () => log(`listening on port ${PORT}`));
